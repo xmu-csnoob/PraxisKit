@@ -14,25 +14,24 @@ Sub-commands:
 ## File Structure
 
 ```
-SKILL.md                         # Standalone skill entry and source of truth
-skills/prd-to-kanban/SKILL.md    # Plugin-packaged skill entry for Claude Code and Codex
-CLAUDE.md                        # This file — repo context for Claude Code
-README.md                        # User-facing install/usage docs
-LICENSE                          # MIT
-.claude/settings.local.json      # Local permissions (gitignored — configure per-machine)
-.claude-plugin/plugin.json       # Claude Code plugin manifest
-.claude-plugin/marketplace.json  # Claude Code marketplace catalog
-.codex-plugin/plugin.json        # Codex plugin manifest
-.agents/plugins/marketplace.json # Codex repo marketplace catalog
-.gitignore                       # Ignores .DS_Store + settings.local.json
+SKILL.md                                      # Standalone skill entry
+plugins/prd-to-kanban/SKILL.md               # Shared skill source of truth
+plugins/prd-to-kanban/skills/prd-to-kanban/  # Plugin-packaged skill entry
+plugins/prd-to-kanban/.claude-plugin/        # Claude Code plugin manifest
+plugins/prd-to-kanban/.codex-plugin/         # Codex plugin manifest
+.claude-plugin/marketplace.json              # Claude Code marketplace catalog
+.agents/plugins/marketplace.json             # Codex marketplace catalog
+CLAUDE.md                                     # This file - repo context for Claude Code
+AGENTS.md                                     # Repo context for Codex
+README.md                                     # User-facing install/usage docs
 ```
 
-`SKILL.md` is the single source of truth for the skill's behavior. The plugin-packaged skill entry delegates back to it.
+`plugins/prd-to-kanban/SKILL.md` is the single source of truth for the skill's behavior. Root `SKILL.md` and the plugin-packaged skill entry delegate to it.
 
 ## Modifying This Skill
 
-- All skill logic is in `SKILL.md` — edit that file directly
-- Keep `skills/prd-to-kanban/SKILL.md` as a thin plugin entry that points back to root `SKILL.md`
+- All skill logic is in `plugins/prd-to-kanban/SKILL.md` - edit that file directly
+- Keep root `SKILL.md` and `plugins/prd-to-kanban/skills/prd-to-kanban/SKILL.md` as thin entries that point to the shared source
 - The skill defines its own trigger conditions (when Claude should invoke it automatically)
 - Settings in `.claude/settings.local.json` are local-only and gitignored. Keep them machine-specific.
 - Test changes by running the skill against a sample PRD and inspecting the generated `kanban.md` and `SUBAGENT.md`

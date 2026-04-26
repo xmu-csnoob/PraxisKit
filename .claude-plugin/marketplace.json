@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "prd-to-kanban",
-      "source": "./",
+      "source": "./plugins/prd-to-kanban",
       "description": "Convert a PRD into a living Kanban board and shared subagent context.",
       "version": "1.0.0",
       "author": {

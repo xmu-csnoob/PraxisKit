@@ -7,7 +7,7 @@ description: Convert a PRD, design doc, feature requirements, or "plan this / br
 
 This is the plugin-packaged entry point for `prd-to-kanban`.
 
-Before planning, read the shared standalone skill instructions at `../../SKILL.md` and follow them exactly. That file is the source of truth for triggers, output format, task granularity, acceptance criteria, dependency layering, and handoff rules.
+Before planning, read the shared implementation instructions at `../../SKILL.md` and follow them exactly. That file is the source of truth for triggers, output format, task granularity, acceptance criteria, dependency layering, and handoff rules.
 
 If `../../SKILL.md` is unavailable, use this fallback:
 - Convert the PRD or requirements into two files: `<project>/work/kanban.md` and `<project>/work/SUBAGENT.md`.

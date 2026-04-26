@@ -22,12 +22,13 @@ This is a **planning-only** skill: it decomposes work but does not implement tas
 ## Layout
 
 ```text
-SKILL.md                         # Standalone Claude/Codex skill entry and source of truth
-skills/prd-to-kanban/SKILL.md    # Plugin-packaged skill entry for Claude Code and Codex
-.claude-plugin/plugin.json       # Claude Code plugin manifest
-.claude-plugin/marketplace.json  # Claude Code marketplace catalog
-.codex-plugin/plugin.json        # Codex plugin manifest
-.agents/plugins/marketplace.json # Codex repo marketplace catalog
+SKILL.md                                      # Standalone Claude/Codex skill entry
+plugins/prd-to-kanban/SKILL.md               # Shared skill source of truth
+plugins/prd-to-kanban/skills/prd-to-kanban/  # Plugin-packaged skill entry
+plugins/prd-to-kanban/.claude-plugin/        # Claude Code plugin manifest
+plugins/prd-to-kanban/.codex-plugin/         # Codex plugin manifest
+.claude-plugin/marketplace.json              # Claude Code marketplace catalog
+.agents/plugins/marketplace.json             # Codex marketplace catalog
 ```
 
 ## Install
@@ -49,7 +50,7 @@ Then run in Claude Code:
 For local development:
 
 ```bash
-claude --plugin-dir .
+claude --plugin-dir plugins/prd-to-kanban
 ```
 
 For marketplace installation after publishing this repo:

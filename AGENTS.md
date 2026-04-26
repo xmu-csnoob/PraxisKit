@@ -14,9 +14,10 @@ It is planning-only. Do not implement tasks as part of the skill workflow.
 ## Compatibility Surfaces
 
 - Standalone skill: root `SKILL.md`
-- Claude Code plugin: `.claude-plugin/plugin.json` plus `skills/prd-to-kanban/SKILL.md`
+- Shared skill source: `plugins/prd-to-kanban/SKILL.md`
+- Claude Code plugin: `plugins/prd-to-kanban/.claude-plugin/plugin.json` plus `plugins/prd-to-kanban/skills/prd-to-kanban/SKILL.md`
 - Claude Code marketplace: `.claude-plugin/marketplace.json`
-- Codex plugin: `.codex-plugin/plugin.json` plus `skills/prd-to-kanban/SKILL.md`
+- Codex plugin: `plugins/prd-to-kanban/.codex-plugin/plugin.json` plus `plugins/prd-to-kanban/skills/prd-to-kanban/SKILL.md`
 - Codex marketplace: `.agents/plugins/marketplace.json`
 
-Root `SKILL.md` is the source of truth. Keep `skills/prd-to-kanban/SKILL.md` as a thin plugin entry that points back to root `SKILL.md`.
+`plugins/prd-to-kanban/SKILL.md` is the source of truth. Keep root `SKILL.md` and `plugins/prd-to-kanban/skills/prd-to-kanban/SKILL.md` as thin entries.

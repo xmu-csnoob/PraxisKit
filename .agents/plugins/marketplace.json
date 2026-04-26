@@ -8,7 +8,7 @@
       "name": "prd-to-kanban",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/prd-to-kanban"
       },
       "policy": {
         "installation": "AVAILABLE",
