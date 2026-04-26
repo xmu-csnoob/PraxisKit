@@ -1,0 +1,20 @@
+{
+  "name": "xmu-csnoob-tools",
+  "interface": {
+    "displayName": "xmu-csnoob Tools"
+  },
+  "plugins": [
+    {
+      "name": "prd-to-kanban",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "xmu-csnoob-tools",
+  "owner": {
+    "name": "xmu-csnoob"
+  },
+  "metadata": {
+    "description": "Reusable planning and project-management plugins.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "prd-to-kanban",
+      "source": "./",
+      "description": "Convert a PRD into a living Kanban board and shared subagent context.",
+      "version": "1.0.0",
+      "author": {
+        "name": "xmu-csnoob"
+      },
+      "repository": "https://github.com/xmu-csnoob/prd-to-kanban",
+      "license": "MIT",
+      "keywords": [
+        "claude-code",
+        "codex",
+        "skill",
+        "prd",
+        "kanban",
+        "task-decomposition"
+      ],
+      "category": "Productivity",
+      "tags": [
+        "planning",
+        "prd",
+        "kanban",
+        "multi-agent"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "PRD to Kanban"
+  short_description: "Turn PRDs into agent-ready Kanban boards"
+  default_prompt: "Use $prd-to-kanban to turn this PRD into work/kanban.md and work/SUBAGENT.md."
+
+policy:
+  allow_implicit_invocation: true

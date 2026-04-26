@@ -1,6 +1,6 @@
 # PRD to Kanban
 
-A Claude Code skill that converts PRDs/requirements into a living Kanban board (`kanban.md`) — readable by humans, editable by agents.
+A cross-compatible Claude Code and Codex skill/plugin that converts PRDs or requirements into a living Kanban board (`work/kanban.md`) plus shared subagent context (`work/SUBAGENT.md`).
 
 ## Workflow
 
@@ -8,7 +8,7 @@ A Claude Code skill that converts PRDs/requirements into a living Kanban board (
 PRD → prd-to-kanban → kanban.md → subagent-driven-development → implemented code
 ```
 
-This is a **planning-only** skill — it decomposes work but does not execute it. After generating `kanban.md`, execution is handed off to `subagent-driven-development`.
+This is a **planning-only** skill: it decomposes work but does not implement tasks. The generated files are ready for `subagent-driven-development` or equivalent multi-agent execution.
 
 ## Features
 
@@ -17,30 +17,88 @@ This is a **planning-only** skill — it decomposes work but does not execute it
 - **Computed fields** — progress %, dependency layers, parallelism windows auto-refreshed from task statuses
 - **Multi-agent update protocol** — orchestrator-owned board, subagent-safe status updates
 - **Definition of Done** — verifiable acceptance criteria by task type (schema, API, UI, feature, test, integration)
-- **Auto-install** — `/prd-to-kanban install` writes trigger rules to CLAUDE.md for automatic invocation
+- **Claude auto-install** — `/prd-to-kanban install` writes trigger rules to `CLAUDE.md`
+
+## Layout
+
+```text
+SKILL.md                         # Standalone Claude/Codex skill entry and source of truth
+skills/prd-to-kanban/SKILL.md    # Plugin-packaged skill entry for Claude Code and Codex
+.claude-plugin/plugin.json       # Claude Code plugin manifest
+.claude-plugin/marketplace.json  # Claude Code marketplace catalog
+.codex-plugin/plugin.json        # Codex plugin manifest
+.agents/plugins/marketplace.json # Codex repo marketplace catalog
+```
 
 ## Install
 
-```bash
-# Clone into your skills directory
-git clone https://github.com/xmu-csnoob/prd-to-kanban.git ~/.claude/skills/prd-to-kanban
+### Claude Code standalone skill
 
-# Auto-configure trigger rules
-# (run in Claude Code)
+```bash
+git clone https://github.com/xmu-csnoob/prd-to-kanban.git ~/.claude/skills/prd-to-kanban
+```
+
+Then run in Claude Code:
+
+```text
 /prd-to-kanban install
 ```
 
+### Claude Code plugin
+
+For local development:
+
+```bash
+claude --plugin-dir .
+```
+
+For marketplace installation after publishing this repo:
+
+```bash
+claude plugin marketplace add xmu-csnoob/prd-to-kanban
+claude plugin install prd-to-kanban@xmu-csnoob-tools
+```
+
+### Codex standalone skill
+
+Clone or copy this repository to your Codex skills directory:
+
+```bash
+git clone https://github.com/xmu-csnoob/prd-to-kanban.git ~/.codex/skills/prd-to-kanban
+```
+
+Restart Codex so the skill list is refreshed.
+
+### Codex plugin
+
+For local testing from this repository:
+
+```bash
+codex plugin marketplace add .
+```
+
+For installation after publishing this repo:
+
+```bash
+codex plugin marketplace add xmu-csnoob/prd-to-kanban
+```
+
+Then open `/plugins`, choose `xmu-csnoob Tools`, and install `prd-to-kanban`.
+
 ## Usage
 
-```
-/prd-to-kanban                  # Convert current PRD/requirements
-/prd-to-kanban install          # Install auto-trigger rules to ~/.claude/CLAUDE.md
-/prd-to-kanban install --project  # Install to project-level ./CLAUDE.md
+```text
+/prd-to-kanban                         # Claude standalone skill
+/prd-to-kanban install                 # Claude trigger rules in ~/.claude/CLAUDE.md
+/prd-to-kanban install --project       # Claude trigger rules in ./CLAUDE.md
+/prd-to-kanban:prd-to-kanban           # Claude plugin skill
+Use $prd-to-kanban to plan this PRD.   # Codex skill/plugin invocation style
 ```
 
 ## Output
 
-A single file: `<project>/work/kanban.md`
+- `<project>/work/kanban.md`
+- `<project>/work/SUBAGENT.md`
 
 ## License
 

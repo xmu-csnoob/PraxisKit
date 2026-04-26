@@ -1,14 +1,16 @@
 {
   "name": "prd-to-kanban",
   "version": "1.0.0",
-  "description": "Convert a PRD into a living Kanban board (markdown). PRD → kanban.md → subagent-driven-development execution.",
+  "description": "Convert a PRD into a living Kanban board and shared subagent context.",
   "author": {
     "name": "xmu-csnoob"
   },
   "repository": "https://github.com/xmu-csnoob/prd-to-kanban",
   "license": "MIT",
+  "skills": "./skills/",
   "keywords": [
     "claude-code",
+    "codex",
     "skill",
     "prd",
     "kanban",
