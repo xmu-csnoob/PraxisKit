@@ -20,6 +20,26 @@ PRD -> prd-to-kanban -> work/kanban.md + work/SUBAGENT.md -> subagent-driven-dev
 
 Use it when a feature needs dependency-aware task breakdown, multiple owners, or parallel agent execution. For small single-file bugs or already-sequenced task lists, handle the work directly instead.
 
+## PraxisKit Preview
+
+This repository also contains an experimental `PraxisKit` plugin in `plugins/praxiskit/`. It packages a broader intent-to-acceptance chain:
+
+```text
+seed-to-idea -> idea-to-prd -> prd-to-kanban -> kanban-to-agents -> build-to-review
+```
+
+The intent is to preserve user intent as it becomes progressively more concrete: idea, PRD, executable Kanban plan, coordinated implementation, and final acceptance review.
+
+| Skill | User Intent | Primary Output | Stops Before |
+|-------|-------------|----------------|--------------|
+| `seed-to-idea` | "I have a rough seed; help me shape it." | `work/idea.md` | Requirements writing |
+| `idea-to-prd` | "Turn this idea into requirements." | `work/PRD.md` | Task decomposition |
+| `prd-to-kanban` | "Break this PRD into agent-ready work." | `work/kanban.md`, `work/SUBAGENT.md` | Implementation |
+| `kanban-to-agents` | "Execute or coordinate this Kanban plan." | Code changes, updated Kanban, run logs | User acceptance |
+| `build-to-review` | "Show me what was built so I can judge it." | `work/review.md` acceptance packet | New feature scope |
+
+`build-to-review` is the final step: it presents the implemented result against the original idea, PRD, and Kanban criteria so the user can accept, revise, or continue. The preview is intentionally not listed in the marketplace catalogs yet. Test it locally with `claude --plugin-dir plugins/praxiskit` or by pointing Codex at `plugins/praxiskit` during local plugin development.
+
 ## What It Generates
 
 `work/kanban.md` is the dynamic board. It uses plain markdown checkboxes, task IDs, dependency references, computed dependency layers, parallelism windows, and a critical path.
@@ -149,6 +169,7 @@ plugins/prd-to-kanban/SKILL.md               # Shared skill source of truth
 plugins/prd-to-kanban/skills/prd-to-kanban/  # Plugin-packaged skill entry
 plugins/prd-to-kanban/.claude-plugin/        # Claude Code plugin manifest
 plugins/prd-to-kanban/.codex-plugin/         # Codex plugin manifest
+plugins/praxiskit/                           # Experimental multi-skill PraxisKit plugin
 .claude-plugin/marketplace.json              # Claude Code marketplace catalog
 .agents/plugins/marketplace.json             # Codex marketplace catalog
 docs/README.md                               # Demo GIF recording notes

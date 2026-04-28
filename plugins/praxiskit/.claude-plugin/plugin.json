@@ -1,0 +1,21 @@
+{
+  "name": "praxiskit",
+  "version": "0.1.0",
+  "description": "Turn product intent into governed agent execution and final acceptance review through composable skills.",
+  "author": {
+    "name": "xmu-csnoob"
+  },
+  "repository": "https://github.com/xmu-csnoob/prd-to-kanban",
+  "license": "MIT",
+  "skills": "./skills/",
+  "keywords": [
+    "claude-code",
+    "codex",
+    "skill",
+    "agents",
+    "prd",
+    "kanban",
+    "orchestration",
+    "praxiskit"
+  ]
+}
