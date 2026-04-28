@@ -6,8 +6,8 @@
     "name": "xmu-csnoob",
     "url": "https://github.com/xmu-csnoob"
   },
-  "homepage": "https://github.com/xmu-csnoob/prd-to-kanban",
-  "repository": "https://github.com/xmu-csnoob/prd-to-kanban",
+  "homepage": "https://github.com/xmu-csnoob/praxiskit",
+  "repository": "https://github.com/xmu-csnoob/praxiskit",
   "license": "MIT",
   "skills": "./skills/",
   "keywords": [
@@ -29,7 +29,7 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/xmu-csnoob/prd-to-kanban",
+    "websiteURL": "https://github.com/xmu-csnoob/praxiskit",
     "defaultPrompt": [
       "Use PRD to Kanban to turn this PRD into work/kanban.md.",
       "Break this feature spec into an agent-ready Kanban board.",

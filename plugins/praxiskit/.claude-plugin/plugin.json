@@ -6,8 +6,8 @@
     "name": "xmu-csnoob",
     "url": "https://github.com/xmu-csnoob"
   },
-  "homepage": "https://github.com/xmu-csnoob/prd-to-kanban",
-  "repository": "https://github.com/xmu-csnoob/prd-to-kanban",
+  "homepage": "https://github.com/xmu-csnoob/praxiskit",
+  "repository": "https://github.com/xmu-csnoob/praxiskit",
   "license": "MIT",
   "skills": "./skills/",
   "keywords": [
@@ -30,7 +30,7 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/xmu-csnoob/prd-to-kanban",
+    "websiteURL": "https://github.com/xmu-csnoob/praxiskit",
     "defaultPrompt": [
       "Use PraxisKit to turn this rough idea into a PRD and implementation plan.",
       "Use kanban-to-agents to advance work/kanban.md with coordinated agents.",

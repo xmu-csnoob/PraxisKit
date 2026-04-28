@@ -9,9 +9,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xmu-csnoob/prd-to-kanban.git"
+    "url": "https://github.com/xmu-csnoob/praxiskit.git"
   },
-  "homepage": "https://github.com/xmu-csnoob/prd-to-kanban",
+  "homepage": "https://github.com/xmu-csnoob/praxiskit",
   "keywords": [
     "claude-code",
     "codex",
