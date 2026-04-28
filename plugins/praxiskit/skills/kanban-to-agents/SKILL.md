@@ -26,7 +26,7 @@ Require both files unless the user gives equivalent content:
 - `work/SUBAGENT.md` - static shared context for implementation agents
 - `work/praxiskit-context.md` - compact cross-skill index, if present
 
-If either file is missing, stop and recommend `$prd-to-kanban`.
+If either file is missing, stop and recommend invoking the `prd-to-kanban` skill.
 
 ## Preflight
 
@@ -105,3 +105,36 @@ Use this format:
 ```
 
 Stop when the selected wave is complete, validation fails, all remaining work is blocked, or the user requested a bounded run.
+
+---
+
+## `work/praxiskit-context.md` Format
+
+A compact cross-skill index updated by each skill in the pipeline. Keeps the pipeline coherent across sessions.
+
+```markdown
+# PraxisKit Context: {project}
+
+## Source Files
+- idea: `work/idea.md`
+- prd: `work/PRD.md`
+- kanban: `work/kanban.md`
+- subagent: `work/SUBAGENT.md`
+
+## Current Milestone
+{ID} — {title} ({status})
+
+## Canonical Constraints
+- {frozen contract path} — {what it defines}
+
+## Open Blockers
+- {T_ID or gate}: {reason}
+
+## Latest Validation
+- `{command}` → {result} ({date})
+
+## Last Updated By
+{skill-name} on {date}
+```
+
+Keep it under 40 lines. Only list what is current — remove resolved blockers and outdated validation.

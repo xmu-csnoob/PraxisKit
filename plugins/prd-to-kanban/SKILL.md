@@ -246,7 +246,7 @@ If AC cannot be made concrete, mark task `Needs Human Approval` with `~` as AC p
 9. **Add contract invariants** — W0 contract tasks must state validation boundary, duplicate-state policy, length-limit policy, and whether invalid states are impossible by type.
 10. **Generate `kanban.md`** and report the file path. Reflect actual in-progress state — do not reset existing `[x]`/`[/]` to pending
 11. **Generate `SUBAGENT.md`**: project summary, stack, frozen contracts (paths + what they define), write scope table per epic, conventions. Keep it under 80 lines.
-12. **Update `work/praxiskit-context.md`** with current milestone, canonical constraints, open blockers, latest validation, and source files.
+12. **Update `work/praxiskit-context.md`** (only if running inside a PraxisKit pipeline — skip if this file does not exist and PraxisKit is not in use) with current milestone, canonical constraints, open blockers, latest validation, and source files.
 13. **Handoff.** Both files are ready for `kanban-to-agents`. Invoke it if the user wants immediate execution; otherwise, present the board and wait.
 
 ---

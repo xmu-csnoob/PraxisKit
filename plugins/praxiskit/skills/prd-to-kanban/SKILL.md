@@ -7,7 +7,7 @@ description: "Convert a PRD, design doc, feature requirements, or PraxisKit work
 
 This is the PraxisKit-packaged entry point for `prd-to-kanban`.
 
-Before planning, read the shared implementation instructions at `../../../prd-to-kanban/SKILL.md` and follow them exactly. That file is the source of truth for output format, task granularity, acceptance criteria, dependency layering, critical path, and subagent handoff rules.
+Invoke the `prd-to-kanban` skill and follow its instructions exactly. That skill is the source of truth for output format, task granularity, acceptance criteria, dependency layering, critical path, and subagent handoff rules.
 
 Position in PraxisKit:
 
@@ -23,4 +23,4 @@ If the shared source is unavailable, use this fallback:
 - Put frozen contract/schema work in Wave 0.
 - Compute dependency layers, parallelism windows, and the critical path.
 - Keep `SUBAGENT.md` under 80 lines with project summary, stack, frozen contracts, write scopes, and subagent reporting conventions.
-- Report the generated paths and wait unless the user asks for execution with `$kanban-to-agents`.
+- Report the generated paths and wait unless the user asks for execution with `kanban-to-agents`.

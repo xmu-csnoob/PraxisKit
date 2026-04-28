@@ -19,7 +19,7 @@ work/idea.md -> idea-to-prd -> work/PRD.md -> prd-to-kanban
 4. **Draft before minor questions.** Infer a coherent first PRD from the idea brief. Use `Assumptions` and `Open Questions` for gaps instead of blocking on perfect information.
 5. **Write `work/PRD.md`.** If a PRD path is supplied, use it. Otherwise use `work/PRD.md`. Keep small-feature PRDs under 180 lines.
 6. **Update context index.** Refresh `work/praxiskit-context.md` with PRD path, canonical constraints, open blockers, and known validation gaps.
-7. **Stop at product requirements.** Do not decompose into tasks; hand off to `$prd-to-kanban` when the user wants planning.
+7. **Stop at product requirements.** Do not decompose into tasks; hand off to the `prd-to-kanban` skill when the user wants planning.
 
 ## Clarification UX
 
@@ -106,7 +106,7 @@ Say A/B/C/D, or say "continue" and I will assume A.
 | ... | ... | implementation / release / future | blocking / non-blocking |
 
 ## Kanban Handoff
-Recommended next step: `$prd-to-kanban`.
+Recommended next step: invoke the `prd-to-kanban` skill.
 ```
 
 Acceptance criteria must be observable by an implementation agent. Avoid vague criteria such as "works well" or "feels nice"; translate them into concrete behavior.

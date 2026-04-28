@@ -22,7 +22,7 @@ Do not write a PRD, Kanban board, or implementation plan unless the user explici
 5. **Mark assumptions.** Do not invent certainty. Put inferred details under `Assumptions` and unresolved items under `Risks & Unknowns`.
 6. **Write `work/idea.md`.** Create the file in the target project. If a `work/` directory is missing, create it. Keep small-feature briefs under 120 lines.
 7. **Update context index.** Create or update `work/praxiskit-context.md` with source files, canonical constraints, latest decision, and open blockers.
-8. **Handoff.** End by stating that `work/idea.md` is ready for `$idea-to-prd` if the user wants a formal PRD.
+8. **Handoff.** End by stating that `work/idea.md` is ready for the `idea-to-prd` skill if the user wants a formal PRD.
 
 ## Clarification UX
 
@@ -98,7 +98,7 @@ Say A/B/C/D, or say "continue" and I will assume A.
 - {observable evidence that the idea works}
 
 ## PRD Handoff
-Recommended next step: `$idea-to-prd`.
+Recommended next step: invoke the `idea-to-prd` skill.
 ```
 
 Keep the brief concise. Favor crisp product language over implementation detail.
