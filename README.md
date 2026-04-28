@@ -1,5 +1,10 @@
 # PRD to Kanban
 
+[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code%20Marketplace-Listed-green?style=flat-square&logo=anthropic)](https://claude.com/claude-code/marketplace)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](#license)
+
+> **Official Claude Code Marketplace Plugin** — Published to `xmu-csnoob-tools` plugin package. Install directly via `claude plugin install prd-to-kanban@xmu-csnoob-tools`
+
 A cross-compatible Claude Code and Codex skill/plugin that converts PRDs or requirements into a living Kanban board (`work/kanban.md`) plus shared subagent context (`work/SUBAGENT.md`).
 
 ## Workflow
@@ -9,6 +14,59 @@ PRD → prd-to-kanban → kanban.md → subagent-driven-development → implemen
 ```
 
 This is a **planning-only** skill: it decomposes work but does not implement tasks. The generated files are ready for `subagent-driven-development` or equivalent multi-agent execution.
+
+## Demo
+
+Paste a PRD → skill generates `work/kanban.md` → agents execute in parallel layers → Done.
+
+![PRD to Kanban Demo](docs/demo.gif)
+
+> **Recording tip:** Use [Kap](https://getkap.co) or [LICEcap](http://www.cockos.com/licecap) to capture your screen. Save as GIF and place in `docs/demo.gif`.
+
+## What the output looks like
+
+Given a PRD, `work/kanban.md` produces a living board with topological layers and critical path markers:
+
+````markdown
+# kanban.md — Project Name
+
+**Overall Progress:** 3/18 tasks (17%) | **Critical Path Length:** 11 layers
+**Last Updated:** 2026-04-28 09:15 | **Orchestrator:** @agent-orchestrator
+
+---
+
+## 🔴 Critical Path (longest dependency chain)
+
+| Task | Layer | Type | Status |
+|------|-------|------|--------|
+| Design database schema | 0 | schema | 🔴 IN PROGRESS |
+| Implement auth service | 1 | API | 🔴 IN PROGRESS |
+| Build login endpoint | 2 | API | ⬜ TODO |
+| Create session middleware | 3 | feature | ⬜ TODO |
+| Write auth integration tests | 5 | test | ⬜ TODO |
+
+---
+
+## 🟡 Layer 0 — Schema / Contract (parallelism: 3 tasks)
+
+| Task | Type | Status | Blocked By |
+|------|------|--------|------------|
+| Design database schema | schema | 🔴 IN PROGRESS | — |
+| Define API response contracts | schema | 🟡 IN PROGRESS | — |
+| Design data models | schema | ⬜ TODO | — |
+
+## 🟡 Layer 1 — Foundation APIs (parallelism: 4 tasks, depends on Layer 0)
+
+| Task | Type | Status | Blocked By |
+|------|------|--------|------------|
+| Implement auth service | API | 🔴 IN PROGRESS | Design database schema |
+| Build user CRUD endpoints | API | ⬜ TODO | Design database schema |
+| Create project endpoints | API | ⬜ TODO | Design database schema |
+| Define search interface | API | ⬜ TODO | Define API response contracts |
+
+## 🟢 Layer 2 — Feature Logic (parallelism: 5 tasks, depends on Layer 1)
+
+...
 
 ## Features
 
