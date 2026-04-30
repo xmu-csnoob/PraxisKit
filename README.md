@@ -2,22 +2,31 @@
 
 **Turn a rough idea into shipped code — through governed handoffs between AI agents.**
 
-PraxisKit is a Claude Code / Codex plugin that chains five skills into a full intent-to-acceptance pipeline. Each skill stops at a clean handoff boundary, preserving context as ideas become concrete.
+PraxisKit is a Claude Code / Codex plugin that turns rough intent into right-sized plans, governed execution, and acceptance evidence. The default flow has two user-level skills; the five atomic skills remain available when you want precise control.
 
 ```text
-seed-to-idea    →  idea-to-prd  →  prd-to-kanban  →  kanban-to-agents  →  build-to-review
-   ↓                  ↓               ↓                   ↓                   ↓
- work/idea.md    work/PRD.md    work/kanban.md      code changes         work/review.md
-                                     + SUBAGENT.md
+shape-to-plan  →  plan-to-review
+     ↓                 ↓
+ work/plan.md     code changes + work/review.md
+ or full docs
 ```
 
-> Stop at any step. The output of each skill is the input to the next.
+> Planning and execution stay separated. `plan-to-review` dry-runs unless you explicitly authorize implementation.
 
 [![Claude Code Marketplace](https://img.shields.io/badge/Claude%20Code%20Marketplace-Published-green?style=flat-square&logo=anthropic)](https://github.com/xmu-csnoob/praxiskit/blob/main/.claude-plugin/marketplace.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](#license)
 [![Stars](https://img.shields.io/github/stars/xmu-csnoob/praxiskit?style=flat-square&logo=github)](https://github.com/xmu-csnoob/praxiskit/stargazers)
 
-## The Five Skills
+## Default Two-Skill Flow
+
+| Skill | Use when... | Stops before |
+|-------|-------------|--------------|
+| `/praxiskit:shape-to-plan` | You have a seed, idea, or existing PRD and want the right-sized plan | Implementation |
+| `/praxiskit:plan-to-review` | You have `work/plan.md` or `work/kanban.md` and want the next batch inspected or explicitly executed | New scope |
+
+`shape-to-plan` chooses Light, Standard, or Full mode. Light mode writes compact `work/plan.md`; larger work writes the existing `work/idea.md`, `work/PRD.md`, `work/kanban.md`, and optionally `work/SUBAGENT.md`.
+
+## Atomic Skills
 
 | Skill | Use when... | Stops before |
 |-------|-------------|--------------|
@@ -36,17 +45,27 @@ claude plugin marketplace add xmu-csnoob/praxiskit
 # 2. Install the plugin
 claude plugin install praxiskit@xmu-csnoob-tools
 
-# 3. Run — start anywhere in the chain
-/praxiskit:seed-to-idea   # give it a rough idea
-/praxiskit:idea-to-prd     # turn the idea into a PRD
-/praxiskit:prd-to-kanban  # turn the PRD into a kanban board
+# 3. Run — default two-step flow
+/praxiskit:shape-to-plan  # create the lightest correct plan
+/praxiskit:plan-to-review # dry-run next batch unless execution is explicit
 ```
 
 For Codex: `codex plugin marketplace add xmu-csnoob/praxiskit`, then open `/plugins` → install `praxiskit`.
 
 ## What Gets Produced
 
-### work/kanban.md — the living board
+### work/plan.md — compact plan for light work
+
+A compact task plan for small, single-pass changes. It is still governed by `plan.schema.md`, so domain lists, API details, schemas, and performance targets cannot be invented.
+
+```
+## Tasks
+| ID | Task | Status | Acceptance Criteria | Write Scope | Dependencies |
+|----|------|--------|---------------------|-------------|--------------|
+| L1 | ...  | [ ]    | Given..., when...   | `path`      | []           |
+```
+
+### work/kanban.md — the living board for larger work
 
 A dependency-aware task board with computed layers, parallelism windows, and a critical path. Agents edit it directly; you read the summary.
 
@@ -95,17 +114,18 @@ codex plugin marketplace add xmu-csnoob/praxiskit
 git clone https://github.com/xmu-csnoob/praxiskit.git ~/.claude/skills/praxiskit
 ```
 
-## Calling Individual Skills
+## Calling Skills
 
-All five skills live in the same plugin. Use `:` to invoke a specific step:
+All skills live in the same plugin. Use `:` to invoke a specific step:
 
 ```text
+/praxiskit:shape-to-plan        /praxiskit:plan-to-review
 /praxiskit:seed-to-idea        /praxiskit:idea-to-prd
 /praxiskit:prd-to-kanban       /praxiskit:kanban-to-agents
 /praxiskit:build-to-review
 ```
 
-No need to install each skill separately — one plugin install gives you all five.
+No need to install each skill separately — one plugin install gives you the integrated and atomic skills.
 
 ## Why PraxisKit
 
@@ -128,6 +148,8 @@ See `examples/` in this repo:
 
 ```
 plugins/praxiskit/skills/
+  shape-to-plan/        # seed/idea/PRD → right-sized plan
+  plan-to-review/       # authorized execution → work/review.md
   seed-to-idea/         # raw seed → work/idea.md
   idea-to-prd/          # idea → work/PRD.md
   prd-to-kanban/        # PRD → work/kanban.md + work/SUBAGENT.md

@@ -2,6 +2,15 @@
 
 All notable changes are documented here.
 
+## [0.2.0] — PraxisKit integrated skills
+
+Adds the two-skill integrated PraxisKit flow on top of the existing atomic skills.
+
+- `shape-to-plan` — seed / idea / PRD → right-sized plan, with Light / Standard / Full mode selection
+- `plan-to-review` — plan / Kanban → dry-run by default, execution only with explicit authorization, then review evidence
+- `plan.schema.md` — compact `work/plan.md` schema so Light mode does not bypass v2 gates
+- Updated PraxisKit plugin prompts and README to recommend the two-step flow while keeping atomic skills available
+
 ## [1.0.0] — prd-to-kanban
 
 Initial release of the standalone `prd-to-kanban` skill and plugin.
