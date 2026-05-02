@@ -24,7 +24,9 @@ work/task-graph.md -> task-graph-to-batch -> work/execution-batch-{n}.md -> batc
 **Postconditions:**
 - `work/execution-batch-{n}.md` lists selected tasks with parallel groups identified
 - Disjoint write scopes within each parallel group
-- Authorization defaults to `dry-run` unless the user explicitly authorizes implementation with a narrow execution phrase
+- Any 2+ task parallel group records `execution_mode: subagent-driven` and one subagent dispatch expectation per task
+- Authorization defaults to `dry-run` unless the user explicitly authorizes implementation with a narrow execution phrase or host-native execution decision for this exact batch
+- The batch artifact is self-contained enough for `batch-to-build` to execute without rereading the PRD or full task graph
 **Clarification gate:** does NOT fire. Pre-flight-validated.
 **Side effects:**
 - Writes `work/execution-batch-{n}.md`
@@ -66,22 +68,36 @@ Before selecting tasks, establish baseline health:
 
 The batch artifact is always written, but with `authorization: dry-run` by default.
 
-Only these narrow phrases authorize execution:
+Execution authorization can be collected in either of these ways:
+
+1. **Host-native execution decision** after the batch is generated.
+   - Preferred when the user is present.
+   - Ask: "Execute Batch {n} now?"
+   - Options:
+     - `execute_now` — set `authorization: execute` and hand off to `batch-to-build`
+     - `keep_dry_run` — leave dry-run and stop
+     - `revise_batch` — leave dry-run and ask what should change
+   - Include the exact batch path, task IDs, parallel groups, subagent dispatch expectation, and validation commands in the decision prompt so the authorization is scoped to this batch and execution mode.
+2. **Narrow execution phrase** in the current user turn.
+
+These phrases authorize execution:
 - "execute this batch"
 - "implement this wave"
 - "modify code for this batch"
 - "run agents for this batch"
 - "delegate implementation for this batch"
 
-If the user uses one of those exact phrases in the current turn:
+If the user authorizes by decision or phrase in the current turn:
 - Set `authorization: execute` in the batch artifact
 - Record the authorization timestamp
+- Record the authorization source: `decision-ui`, `chat-confirmation`, or `phrase`
+- If any parallel group contains 2+ tasks, record that execution is `subagent-driven` and that the orchestrator must dispatch one subagent per task before doing implementation work.
 
 Otherwise, the batch is dry-run only. Words like "advance", "continue", "next", or "proceed" are ambiguous and MUST NOT set `authorization: execute` by themselves.
 
 ## Execution Phrase Routing
 
-If the current user turn is one of the exact execution phrases above:
+If the current user turn is one of the exact execution phrases above, or the user selects `execute_now` in the host-native execution decision:
 - If a current `work/execution-batch-{n}.md` already exists and matches the next step in `work/praxiskit-context.md`, do not generate another batch. Route to `batch-to-build` for that batch.
 - If no current batch exists and this skill must select one, write the new batch with `Authorization: execute`, `Approved by user: yes`, and the current timestamp.
 - Still do not modify source code in this skill. Execution belongs to `batch-to-build`.
@@ -94,10 +110,18 @@ If the current user turn is one of the exact execution phrases above:
 4. Compute parallel groups and sequential tasks.
 5. Write `work/execution-batch-{n}.md` per `schemas/execution-batch.schema.md`, including:
    - task graph fingerprint (mtime or hash)
+   - exact selected task rows copied from `work/task-graph.md`
+   - exact acceptance criteria for each selected task
    - selected task dependencies
    - selected task status at batch generation time
-6. Update `work/praxiskit-context.md` with the batch path.
-7. Report the generated path. State that `batch-to-build` is the next step (with execution requiring user authorization).
+   - owned write scopes and frozen-contract paths relevant to the selected tasks
+   - validation command(s) selected during preflight
+   - execution mode (`subagent-driven` when any parallel group has 2+ tasks)
+   - explicit subagent dispatch expectations for every parallel group
+6. Surface the execution decision if the batch is still dry-run and the user is present. Prefer host-native decision/input UI; use one direct chat question only if no structured input is available. Do not force the user to type a magic phrase after a batch was just generated. If the batch has a parallel group, the prompt must state that execution will be subagent-driven.
+7. If the user authorizes execution, update the batch authorization block to `Mode: execute`, `Approved by user: yes`, `Authorization source: decision-ui` (or `chat-confirmation`), and current timestamp, then hand off to `batch-to-build`.
+8. Update `work/praxiskit-context.md` with the batch path and authorization state.
+9. Report the generated path. State whether execution was authorized now or remains dry-run.
 
 ## Planning-Only Guardrail
 

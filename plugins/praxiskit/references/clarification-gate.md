@@ -1,12 +1,14 @@
 ---
 name: clarification-gate
-description: "Shared clarification module for PraxisKit v3 transforms. Called by seed-to-idea, idea-to-prd, seed-to-task-graph, and review-to-acceptance when required fields are missing. Handles 0/1-2/>=3 gap triage, AskUserQuestion for shallow gaps, and clarify-{stage}.md table for deep/many gaps."
+description: "Shared clarification module for PraxisKit v3 transforms. Called by seed-to-idea, idea-to-prd, seed-to-task-graph, and review-to-acceptance when required fields are missing. Uses host-native decision/input UI first and falls back to clarify-{stage}.md only for async or oversized input."
 type: reference
 ---
 
 # Clarification Gate
 
 The clarification gate is a shared decision procedure called by PraxisKit skills when required or forbidden-to-infer fields are missing from user input. It enforces structured user participation before any document is written.
+
+Clarification is an interaction, not a file-writing workflow. Prefer the host's structured decision/input mechanism; use Markdown files only when the answer shape is too large for interactive input or the user explicitly wants an async worksheet.
 
 ## When to Call This Gate
 
@@ -19,32 +21,59 @@ Call this gate after loading the stage schema and mapping available input to fie
    - `question`: the question to ask the user
    - `options`: (only for `choice` kind) array of 2-4 options
 
+## Interaction Priority
+
+Use the fastest structured interaction available in the current host:
+
+1. **Host-native decision/input UI.** In Claude Code, use `AskUserQuestion` / the decision mechanism. In Codex, use the comparable structured input mechanism when available. Use single-select, multi-select, short text, list, or freeform controls according to the gap kind.
+2. **Direct chat question.** If the host has no structured tool exposed, ask concise questions in chat and wait for the answer. Keep the question count low and state the expected format.
+3. **Clarify file fallback.** Write `work/clarify-{stage}.md` only when the interaction is genuinely bulk/async: many fields, nested multi-field structures, long free-text answers, or a user request to fill a document.
+
+Do not create a `work/clarify-*.md` file just because a field is missing. Files are for audit artifacts and async worksheets, not the default UX.
+
 ## Triage Algorithm
 
 ```
 n = number of gaps
 has_deep = any gap where kind is 'list', 'free_text', or 'multi_field'
+host_input = host supports structured decision/input UI
 
 if n == 0:
     -> PROCEED: write the document directly
 
+elif host_input:
+    -> USE_INTERACTIVE_INPUT
+      - choice gaps -> decision card / single-select / multi-select
+      - short_text gaps -> short freeform input
+      - list gaps -> ask for a compact newline or comma-separated list
+      - free_text gaps -> ask for a concise paragraph unless the user needs a worksheet
+      - multi_field gaps -> ask for compact structured text, or split into a few focused prompts
+
 elif n <= 2 and not has_deep:
-    -> USE_ASK: use AskUserQuestion tool for each gap
-      - choice gaps -> single-select or multi-select question
-      - short_text gaps -> open-ended question
-      - Ask gaps one at a time; do not bundle multiple questions in one message
+    -> USE_CHAT: ask concise chat questions and wait
 
 else:
     -> USE_TABLE: write work/clarify-{stage}.md and stop
 ```
 
-## Path A: USE_ASK
+## Path A: USE_INTERACTIVE_INPUT
 
-Use the AskUserQuestion tool (Claude Code) or equivalent interactive UI. Ask one question per tool call. Do not bundle multiple questions.
+Use the host-native input surface. Ask no more than three related questions in one interaction if the host supports grouped input; otherwise ask one question at a time. Do not force the user to edit Markdown for simple choices or short answers.
 
 After receiving answers, proceed to write the document with the answers annotated as `[user via gate]`.
 
-## Path B: USE_TABLE
+## Path B: USE_CHAT
+
+Ask concise chat questions and wait for the user. Use this only when no structured input mechanism is available. After receiving answers, proceed to write the document with the answers annotated as `[user via gate]`.
+
+## Path C: USE_TABLE
+
+Use this path only when interactive input is not suitable:
+
+- The answer is a long list, matrix, or nested structure
+- There are many independent fields and a worksheet will be more efficient than sequential prompts
+- The user asked to fill a file asynchronously
+- The current host cannot collect the needed input interactively
 
 ### Write work/clarify-{stage}.md
 
@@ -109,13 +138,13 @@ When the user says "continue":
    - Archive: move `work/clarify-{stage}.md` -> `work/clarify-archive/{stage}-{YYYY-MM-DD}-{HHMM}.md`
    - Write the downstream document with all answers annotated `[user via clarify-{stage}]`
 
-For `stage = acceptance`, the downstream document is `work/acceptance.md`. The decision itself must always come from the user; there is no default and no inference path.
+For `stage = acceptance`, the downstream document is `work/acceptance.md`. The decision itself must always come from the user; there is no default and no inference path. Acceptance decisions should use interactive choice input unless the user explicitly requests an async decision file.
 
 ## Annotating Gate Answers in Output Documents
 
 All values collected through this gate must be annotated in the output document:
 
-- Values from AskUserQuestion: `[user via gate]`
+- Values from host-native input or chat clarification: `[user via gate]`
 - Values from clarify table: `[user via clarify-{stage}]`
 
 Example in idea.md:

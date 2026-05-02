@@ -27,7 +27,7 @@ work/idea.md -> idea-to-prd -> work/PRD.md -> prd-to-task-graph
 **Clarification gate:** fires per `references/clarification-gate.md` for any PRD field that has no `[user]` or `[user via *]` source in idea.md and is not `inferable`.
 **Side effects:**
 - Writes `work/PRD.md`
-- May write `work/clarify-prd.md` (archived after gate completes)
+- May write `work/clarify-prd.md` only as an async/bulk fallback (archived after gate completes)
 - Updates `work/praxiskit-context.md`
 **Stop boundary:** Does NOT decompose into tasks. Hands off to `prd-to-task-graph`.
 
@@ -66,7 +66,7 @@ The agent MUST NOT write any value in the PRD that cannot be attributed to one o
 **Compliant behavior:**
 > Gate asks: "What metadata fields does a KV-cache entry need?"
 > User answers: "layer, token_range, dtype"
-> PRD writes: `FR4: KV-cache entries carry: layer, token_range, dtype [user via clarify-prd]`
+> PRD writes: `FR4: KV-cache entries carry: layer, token_range, dtype [user via gate]`
 
 ## PRD Format
 

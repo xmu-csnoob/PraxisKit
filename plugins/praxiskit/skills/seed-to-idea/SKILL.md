@@ -27,7 +27,7 @@ Do not write a PRD, task graph, or implementation plan unless the user explicitl
 **Clarification gate:** fires per `references/clarification-gate.md` when required or forbidden-to-infer fields lack a user source. Cross-field rules in `idea.schema.md` may add gate fields based on seed content.
 **Side effects:**
 - Writes `work/idea.md`
-- May write `work/clarify-seed.md` (archived to `work/clarify-archive/` after gate completes)
+- May write `work/clarify-seed.md` only as an async/bulk fallback (archived to `work/clarify-archive/` after gate completes)
 - Updates `work/praxiskit-context.md`
 **Stop boundary:** Does NOT write a PRD, task graph, or any downstream artifact. Hands off to `idea-to-prd` only when user requests.
 
@@ -42,8 +42,9 @@ Do not write a PRD, task graph, or implementation plan unless the user explicitl
 4. **Apply cross-field rules** from `schemas/idea.schema.md`. Add any triggered fields to `gaps`.
 5. **Call clarification-gate** (see `references/clarification-gate.md`):
    - 0 gaps -> proceed directly
-   - 1-2 shallow (`choice` or `short_text`) gaps -> use AskUserQuestion
-   - >=3 gaps, or any `list`/`free_text` gap -> write `work/clarify-seed.md` and stop
+   - Prefer host-native structured input for missing fields (`AskUserQuestion` / decision UI in Claude Code, Codex equivalent when available)
+   - Use chat questions if no structured input tool is exposed
+   - Write `work/clarify-seed.md` only for bulk/async clarification or long nested answers
 6. **Write `work/idea.md`** only after all gaps are resolved. Annotate every field with its source.
 7. **Update `work/praxiskit-context.md`** -- add `Pending Clarifications: none` if gate passed.
 8. **Handoff.** State that `work/idea.md` is ready for `idea-to-prd` if the user wants a PRD.

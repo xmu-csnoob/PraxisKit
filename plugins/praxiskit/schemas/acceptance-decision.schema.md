@@ -34,6 +34,8 @@ The `acceptance_decision` artifact is the user's final accept/revise/continue ve
 
 This transform REQUIRES user input. It MUST NOT auto-decide based on review-packet contents alone. The user explicitly states the decision.
 
+Collect the decision through host-native choice/input UI when available. Do not ask the user to edit `work/acceptance.md`; the file is the recorded result after the decision, not the interaction surface.
+
 ## Output Format (work/acceptance.md)
 
 ```markdown
