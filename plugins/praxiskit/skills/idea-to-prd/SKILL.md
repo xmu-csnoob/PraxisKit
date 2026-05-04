@@ -1,6 +1,6 @@
 ---
 name: idea-to-prd
-description: "Turn work/idea.md, rough product notes, or a clarified idea into a concise implementation-ready PRD. Use before prd-to-kanban when requirements need goals, scope, acceptance criteria, constraints, and open questions."
+description: "Create work/PRD.md from work/idea.md while preserving user-source traceability."
 ---
 
 # Idea to PRD
@@ -8,105 +8,68 @@ description: "Turn work/idea.md, rough product notes, or a clarified idea into a
 Convert an idea brief into a PRD that is specific enough for planning, but not yet a task board.
 
 ```text
-work/idea.md -> idea-to-prd -> work/PRD.md -> prd-to-kanban
+work/idea.md -> idea-to-prd -> work/PRD.md -> prd-to-task-graph
 ```
+
+## Contract
+
+**Inputs:** `idea` (`work/idea.md`)
+**Output:** `prd` (`work/PRD.md`)
+**Schema:** `schemas/prd.schema.md` (v2.0)
+**Preconditions:**
+- `work/idea.md` exists and follows `schemas/idea.schema.md`
+- Every field in idea.md has a source annotation
+**Postconditions:**
+- Every PRD field has a `[user]`, `[user via *]`, or `[inferred from {field}]` annotation
+- No-New-Fields Rule holds: no PRD field exists without a traceable source in idea.md or this run's gate
+- All idea.md Open Questions are processed (promoted, carried, or removed)
+- Every FR has acceptance criteria in Given/When/Then form
+**Clarification gate:** fires per `references/clarification-gate.md` for any PRD field that has no `[user]` or `[user via *]` source in idea.md and is not `inferable`.
+**Side effects:**
+- Writes `work/PRD.md`
+- May write `work/clarify-prd.md` only as an async/bulk fallback (archived after gate completes)
+- Updates `work/praxiskit-context.md`
+**Stop boundary:** Does NOT decompose into tasks. Hands off to `prd-to-task-graph`.
 
 ## Workflow
 
-1. **Load source context.** Prefer `work/idea.md`; otherwise use the user's pasted idea or current conversation.
-2. **Inspect the target repo lightly.** Read README/config files only as needed to infer platform, stack, scripts, and existing constraints. If `work/praxiskit-context.md` exists, read it first.
-3. **Detect scope forks.** If the source explicitly leaves product surface, primary user, first release scope, privacy model, or distribution channel undecided, ask one decision card and stop.
-4. **Draft before minor questions.** Infer a coherent first PRD from the idea brief. Use `Assumptions` and `Open Questions` for gaps instead of blocking on perfect information.
-5. **Write `work/PRD.md`.** If a PRD path is supplied, use it. Otherwise use `work/PRD.md`. Keep small-feature PRDs under 180 lines.
-6. **Update context index.** Refresh `work/praxiskit-context.md` with PRD path, canonical constraints, open blockers, and known validation gaps.
-7. **Stop at product requirements.** Do not decompose into tasks; hand off to the `prd-to-kanban` skill when the user wants planning.
+1. **Load source context.** Read `work/idea.md`. If `work/praxiskit-context.md` exists, read it first.
+2. **Load schema.** Read `references/field-state-semantics.md` and `schemas/prd.schema.md`.
+3. **Map idea.md to PRD fields.**
+   - For each PRD field, find the matching idea.md field with a `[user]` or `[user via *]` annotation.
+   - If a PRD field has no `[user]` source in idea.md -> add to `gaps`.
+   - `inferable` PRD fields may be derived from `[user]` idea.md fields -- mark `[inferred from {field}]`.
+4. **Process idea.md Open Questions.** For each Open Question in idea.md:
+   - Check if the question's subject appears as a `[user]` or `[user via *]` annotated field elsewhere in idea.md. If yes → the question is answered; promote that field to a confirmed PRD field.
+   - If no matching `[user]` field exists → the question is still open; carry it to PRD `## Open Questions` with the same `blocking`/`non-blocking` type.
+5. **Apply No-New-Fields Rule.** Any field that would appear in the PRD but has no `[user]` or `[user via *]` source in idea.md and is not `inferable` -> add to `gaps`.
+6. **Call clarification-gate** (see `references/clarification-gate.md`) for all gaps.
+7. **Write `work/PRD.md`** only after all gaps are resolved. Annotate every field with its source.
+8. **Update `work/praxiskit-context.md`**.
+9. **Stop at product requirements.** Do not decompose into tasks.
 
-## Clarification UX
+## No-New-Fields Rule
 
-Avoid broad question lists. Ask only when the answer would change product scope, target user, or first milestone enough that drafting would be misleading.
+**This is the core constraint of idea-to-prd v2.**
 
-- Ask at most one decision card before writing the PRD.
-- Provide 2-4 concrete options and mark a recommended default.
-- Allow "continue" to mean "use the recommended default".
-- Put non-blocking gaps into `Assumptions` or `Open Questions`.
-- After asking a decision card, stop and wait. Do not write `work/PRD.md` in the same turn unless the user already chose an option or explicitly said to continue with defaults.
-- If structured choice UI is available, use it. Otherwise use the markdown card format below.
+The agent MUST NOT write any value in the PRD that cannot be attributed to one of:
+- A `[user]` or `[user via *]` annotated field in `work/idea.md`
+- An answer collected through the clarification gate in this run
+- An `inferable` derivation from the above (marked `[inferred from {field}]`)
 
-Use this format:
+**Violation example (v1 behavior, now prohibited):**
+> idea.md has: `KV-cache support [user]`
+> idea-to-prd writes: `FR4: KV-cache entries must carry model_id, session_id, layer, token_range, tensor_shape, dtype, lifecycle_hints`
+>
+> This violates the rule. The metadata field list is `forbidden-to-infer`. It must go to the gate.
 
-```markdown
-One decision would change the PRD:
+**Compliant behavior:**
+> Gate asks: "What metadata fields does a KV-cache entry need?"
+> User answers: "layer, token_range, dtype"
+> PRD writes: `FR4: KV-cache entries carry: layer, token_range, dtype [user via gate]`
 
-**First release scope**
-- A. Personal workflow inside one repo (Recommended) - validates the core loop fastest.
-- B. Reusable Codex/Claude plugin - better for distribution early.
-- C. Web dashboard - better if non-developers are the first users.
-- D. Other - describe in one phrase.
+## Output
 
-Say A/B/C/D, or say "continue" and I will assume A.
-```
+Write `work/PRD.md` from `templates/prd.md`.
 
-## PRD Format
-
-```markdown
-# PRD: {project or feature}
-
-## Summary
-{2-4 sentences}
-
-## Goals
-- {measurable outcome}
-
-## Repo Baseline
-| Item | Evidence | Notes |
-|------|----------|-------|
-| Platform / stack | `{file}` | |
-| Test command | `{command}` | Declared / inferred / unknown |
-| Build command | `{command}` | Declared / inferred / unknown |
-| Known baseline gaps | `{path or command}` | Blocks implementation / release / future |
-
-## Non-Goals
-- {explicitly out of scope}
-
-## Users & Use Cases
-| User | Need | Success Looks Like |
-|------|------|--------------------|
-
-## Functional Requirements
-| ID | Requirement | Priority | Validation Layer | Acceptance Criteria |
-|----|-------------|----------|------------------|---------------------|
-| FR1 | ... | Must | unit / component / integration / manual UI / build gate | Given ..., when ..., then ... |
-
-## Non-Functional Requirements
-- Performance:
-- Reliability:
-- Security / Privacy:
-- Accessibility:
-
-## UX / Workflow
-1. {step}
-2. {step}
-
-## Data, Contracts, and Integrations
-- `{path or external system}` - {expected role or contract}
-
-## Edge Cases
-- {case and expected behavior}
-
-## Milestones
-| ID | Title | Outcome |
-|----|-------|---------|
-
-## Assumptions
-- {inferred detail}
-
-## Open Questions
-| Question | Owner | Blocks | Type |
-|----------|-------|--------|------|
-| ... | ... | implementation / release / future | blocking / non-blocking |
-
-## Kanban Handoff
-Recommended next step: invoke the `prd-to-kanban` skill.
-```
-
-Acceptance criteria must be observable by an implementation agent. Avoid vague criteria such as "works well" or "feels nice"; translate them into concrete behavior.
+Acceptance criteria must be observable. Do not use vague criteria like "works well"; translate them to concrete Given/When/Then behavior.
