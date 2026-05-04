@@ -19,10 +19,14 @@ For each recipe, the procedure is:
 Every recipe has natural pauses where the user must explicitly authorize the next step:
 
 - **Planning checkpoint** — after `task_graph` is produced. No code is touched yet.
-- **Build checkpoint** — after an explicit execution phrase in the current session. The batch may already have `authorization: execute`, or `batch-to-build` may upgrade a current dry-run batch after validating that it is not stale.
+- **Build checkpoint** — via host-native execution decision or direct yes/no confirmation for the exact batch. The batch may already have `authorization: execute`, or `batch-to-build` may upgrade a current dry-run batch after validating that it is not stale.
 - **Acceptance checkpoint** — `review-to-acceptance` REQUIRES user input; no auto-decide.
 
 Recipe documents list these checkpoints explicitly.
+
+## Recursive Iterations
+
+After `review-to-acceptance` records a decision other than `not_accept_yet`, it archives the completed loop under `work/archive/iterations/{timestamp}-{decision}/` and resets active `work/` to the minimal carry-forward files for the next loop. This keeps recipes recursive: each iteration starts from a clean active work directory plus a durable archive pointer in `work/praxiskit-context.md`.
 
 ## Available Recipes
 
