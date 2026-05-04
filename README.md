@@ -58,6 +58,19 @@ To execute the dry-run batch, explicitly say: `execute this batch`.
 
 For Codex: `codex plugin marketplace add xmu-csnoob/praxiskit`, then open `/plugins` and install `praxiskit`.
 
+## Visual Console
+
+PraxisKit ships with an interactive visual workbench for browsing iterations, task graphs, and review packets.
+
+```bash
+git submodule update --init console
+cd console && npm install && npm run dev
+```
+
+Then open `http://localhost:5173` and select your project's `work/` directory. The console renders task DAGs with React Flow, tracks wave progress, and provides archive access for historical iterations.
+
+> The console is a Git submodule at `console/` → `https://github.com/xmu-csnoob/praxiskit-console`.
+
 ## Usage Guide
 
 ### 1. Pick the Right Recipe
